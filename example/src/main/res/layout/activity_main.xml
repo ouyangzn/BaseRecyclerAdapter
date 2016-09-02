@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="com.ouyangzn.MainActivity"
+    >
+  <Button
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:onClick="testNormalRecycler"
+      android:text="测试普通recyclerView"
+      android:textAllCaps="false"
+      />
+  <Button
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:onClick="testMultiItem"
+      android:text="测试多类型recyclerView"
+      android:textAllCaps="false"
+      />
+  <Button
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:onClick="testEmpty"
+      android:text="测试无数据recyclerView"
+      android:textAllCaps="false"
+      />
+  <Button
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:onClick="testLoadMore"
+      android:text="测试加载更多recyclerView"
+      android:textAllCaps="false"
+      />
+</LinearLayout>

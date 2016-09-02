@@ -1,0 +1,19 @@
+package com.ouyangzn.module.emptyRecycler;
+
+import com.ouyangzn.recyclerview.BaseRecyclerViewAdapter;
+import com.ouyangzn.recyclerview.BaseViewHolder;
+import java.util.List;
+
+/**
+ * Description：
+ */
+public class EmptyRecyclerAdapter extends BaseRecyclerViewAdapter<String> {
+
+  public EmptyRecyclerAdapter(List<String> data) {
+    super(data);
+  }
+
+  @Override protected void convert(BaseViewHolder holder, String item) {
+
+  }
+}
