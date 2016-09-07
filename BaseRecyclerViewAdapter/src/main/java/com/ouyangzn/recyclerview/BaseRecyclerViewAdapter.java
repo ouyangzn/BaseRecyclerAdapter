@@ -66,15 +66,6 @@ public abstract class BaseRecyclerViewAdapter<T>
   private boolean mIsLoading = false;
 
   /**
-   * 留给多类型item布局的adapter使用
-   *
-   * @param data
-   */
-  public BaseRecyclerViewAdapter(List<T> data) {
-    this.mData = data == null ? new ArrayList<T>(0) : data;
-  }
-
-  /**
    * @param layoutResId item文件的资源id
    * @param data 数据
    */
