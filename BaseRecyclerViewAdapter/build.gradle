@@ -25,9 +25,51 @@ dependencies {
   compile 'com.android.support:recyclerview-v7:23.3.0'
 }
 
-// 以下配置为发布到jitpack仓库：
+// 以下配置为发布到jcenter仓库：
 apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.github.ouyangzn'
+apply plugin: 'com.jfrog.bintray'
+
+version = VERSION
+// Maven Group ID for the artifact，一般填你唯一的包名
+group = GROUP_ID
+
+def siteUrl = 'https://github.com/ouyangzn/BaseRecyclerAdapter'
+// 项目的主页
+def gitUrl = 'git@github.com:ouyangzn/BaseRecyclerAdapter.git'
+// Git仓库的url
+install {
+  repositories.mavenInstaller {
+    // This generates POM.xml with proper parameters
+    pom {
+      project {
+        packaging 'aar'
+        // Add your description here 项目的描述
+        name DESCRIPTION
+        url siteUrl
+        // Set your license
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            //填写的一些基本信息
+            id USER
+            name 'Z、ero'
+            email 'ouyangzhaoneng@gmail.com'
+          }
+        }
+        scm {
+          connection gitUrl
+          developerConnection gitUrl
+          url siteUrl
+        }
+      }
+    }
+  }
+}
 
 // build a jar with source files
 task sourcesJar(type: Jar) {
@@ -60,6 +102,23 @@ javadoc {
     version VERSION
     links "http://docs.oracle.com/javase/7/docs/api"
     title 'BaseRecyclerAdapter'
+  }
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+  user = properties.getProperty("bintray.user")
+  key = properties.getProperty("bintray.apikey")
+  configurations = ['archives']
+  pkg {
+    repo = "maven"
+    // project name in jcenter
+    name = ARTIFACT_ID_LIBRARY
+    websiteUrl = siteUrl
+    vcsUrl = gitUrl
+    licenses = ["Apache-2.0"]
+    publish = true
   }
 }
 

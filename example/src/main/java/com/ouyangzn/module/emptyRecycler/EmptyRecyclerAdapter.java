@@ -10,7 +10,7 @@ import java.util.List;
 public class EmptyRecyclerAdapter extends BaseRecyclerViewAdapter<String> {
 
   public EmptyRecyclerAdapter(List<String> data) {
-    super(data);
+    super(0, data);
   }
 
   @Override protected void convert(BaseViewHolder holder, String item) {
