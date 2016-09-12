@@ -30,7 +30,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 version = VERSION
-// Maven Group ID for the artifact，一般填你唯一的包名
+// Maven Group ID for the artifact，对应maven的groupId,一般填你唯一的包名
 group = GROUP_ID
 
 def siteUrl = 'https://github.com/ouyangzn/BaseRecyclerAdapter'
@@ -112,8 +112,9 @@ bintray {
   key = properties.getProperty("bintray.apikey")
   configurations = ['archives']
   pkg {
-    repo = "maven"
-    // project name in jcenter
+    // 在bintray上的repository仓库名
+    repo = "Android-lib"
+    // project name in jcenter工程名,对应maven的artifactId
     name = ARTIFACT_ID_LIBRARY
     websiteUrl = siteUrl
     vcsUrl = gitUrl
