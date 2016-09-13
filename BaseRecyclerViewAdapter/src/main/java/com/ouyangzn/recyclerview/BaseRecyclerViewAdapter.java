@@ -114,6 +114,10 @@ public abstract class BaseRecyclerViewAdapter<T>
     this.mHasMore = hasMore;
   }
 
+  public boolean isLoadingMore() {
+    return mIsLoading;
+  }
+
   /**
    * 完成loadMore
    *

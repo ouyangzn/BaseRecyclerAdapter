@@ -26,7 +26,7 @@ Super RecyclerView Adapter
     mAdapter.setHasMore(true);
 ```
 ## 使用（usage）：
-compile 'com.ouyangzn.lib:BaseRecyclerViewAdapter:1.0.0'
+compile 'com.ouyangzn.lib:BaseRecyclerViewAdapter:1.0.1'
     
 ### 具体用法见Exmaple
 
