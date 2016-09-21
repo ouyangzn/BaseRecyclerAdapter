@@ -44,6 +44,9 @@ install {
       project {
         packaging 'aar'
         // Add your description here 项目的描述
+        groupId GROUP_ID
+        artifactId ARTIFACT_ID
+        version = VERSION
         name DESCRIPTION
         url siteUrl
         // Set your license
@@ -115,11 +118,15 @@ bintray {
     // 在bintray上的repository仓库名
     repo = "Android-lib"
     // project name in jcenter工程名,对应maven的artifactId
-    name = ARTIFACT_ID_LIBRARY
+    name = ARTIFACT_ID
     websiteUrl = siteUrl
     vcsUrl = gitUrl
     licenses = ["Apache-2.0"]
     publish = true
+    version {
+      name = VERSION
+      desc = VERSION_DESC
+    }
   }
 }
 
