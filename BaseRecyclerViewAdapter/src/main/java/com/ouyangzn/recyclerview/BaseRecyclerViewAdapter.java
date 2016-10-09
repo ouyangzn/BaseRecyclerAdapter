@@ -19,7 +19,7 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +36,7 @@ import java.util.List;
  * 数据请求完成时，需调用{@link #loadMoreFinish(boolean, List)}刷新界面<br/>
  * <p><b>多类型item使用时：</b>
  * <li>item的数据需要实现{@link MultipleEntity}</li>
- * <li><font color=blue>使用{@link #BaseRecyclerViewAdapter(SparseArray, List)}构造方法添加item类型</font></li></p>
+ * <li><font color=blue>使用{@link #BaseRecyclerViewAdapter(SparseIntArray, List)}构造方法添加item类型</font></li></p>
  */
 public abstract class BaseRecyclerViewAdapter<T>
     extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -52,7 +52,7 @@ public abstract class BaseRecyclerViewAdapter<T>
   /**
    * layout资源id缓存
    */
-  private SparseArray<Integer> mLayoutsMap;
+  private SparseIntArray mLayoutsMap;
   private OnRecyclerViewItemClickListener mOnRecyclerViewItemClickListener;
   private OnRecyclerViewItemLongClickListener mOnRecyclerViewItemLongClickListener;
   private OnRecyclerViewItemChildClickListener mChildClickListener;
@@ -72,7 +72,7 @@ public abstract class BaseRecyclerViewAdapter<T>
   public BaseRecyclerViewAdapter(int layoutResId, List<T> data) {
     this.mData = data == null ? new ArrayList<T>(0) : data;
     if (layoutResId != 0) {
-      if (mLayoutsMap == null) mLayoutsMap = new SparseArray<>(1);
+      if (mLayoutsMap == null) mLayoutsMap = new SparseIntArray(1);
       mLayoutsMap.put(VIEW_TYPE_DATA, layoutResId);
     }
   }
@@ -83,7 +83,7 @@ public abstract class BaseRecyclerViewAdapter<T>
    * @param layoutMap item文件的map集合，key为itemType，value为layout资源文件id
    * @param data 数据
    */
-  public BaseRecyclerViewAdapter(SparseArray<Integer> layoutMap, List<T> data) {
+  public BaseRecyclerViewAdapter(SparseIntArray layoutMap, List<T> data) {
     this.mData = data == null ? new ArrayList<T>(0) : data;
     this.mLayoutsMap = layoutMap;
   }
@@ -202,8 +202,8 @@ public abstract class BaseRecyclerViewAdapter<T>
 
   @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     BaseViewHolder baseViewHolder;
-    this.mContext = parent.getContext();
-    this.mLayoutInflater = LayoutInflater.from(mContext);
+    if (mContext == null) this.mContext = parent.getContext();
+    if (mLayoutInflater == null) this.mLayoutInflater = LayoutInflater.from(mContext);
     switch (viewType) {
       case VIEW_TYPE_HEADER:
         baseViewHolder = new BaseViewHolder(mHeaderView);
