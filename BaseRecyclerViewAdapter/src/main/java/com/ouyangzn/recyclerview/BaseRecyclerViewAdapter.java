@@ -19,6 +19,7 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public abstract class BaseRecyclerViewAdapter<T>
   protected static final int VIEW_TYPE_FOOTER = 0x000001002;
   protected static final int VIEW_TYPE_EMPTY = 0x000001003;
   protected static final int VIEW_TYPE_LOAD_MORE = 0x000001004;
+  private static final String TAG = BaseRecyclerViewAdapter.class.getSimpleName();
   protected Context mContext;
   protected LayoutInflater mLayoutInflater;
   protected List<T> mData;
@@ -70,7 +72,7 @@ public abstract class BaseRecyclerViewAdapter<T>
    * @param data 数据
    */
   public BaseRecyclerViewAdapter(int layoutResId, List<T> data) {
-    this.mData = data == null ? new ArrayList<T>(0) : data;
+    setData(data);
     if (layoutResId != 0) {
       if (mLayoutsMap == null) mLayoutsMap = new SparseIntArray(1);
       mLayoutsMap.put(VIEW_TYPE_DATA, layoutResId);
@@ -84,7 +86,7 @@ public abstract class BaseRecyclerViewAdapter<T>
    * @param data 数据
    */
   public BaseRecyclerViewAdapter(SparseIntArray layoutMap, List<T> data) {
-    this.mData = data == null ? new ArrayList<T>(0) : data;
+    setData(data);
     this.mLayoutsMap = layoutMap;
   }
 
@@ -154,6 +156,11 @@ public abstract class BaseRecyclerViewAdapter<T>
     return mData;
   }
 
+  private void setData(List<T> data) {
+    this.mData = new ArrayList<>();
+    if (data != null) mData.addAll(data);
+  }
+
   public T getItem(int position) {
     if (mData.size() == 0) return null;
     return mData.get(position);
@@ -161,27 +168,26 @@ public abstract class BaseRecyclerViewAdapter<T>
 
   public void addData(T t) {
     mData.add(t);
-    notifyItemInserted(mData.size() + 1);
+    notifyItemInserted(mData.size() + getHeaderViewsCount());
   }
 
   public void addData(T t, int position) {
     mData.add(position, t);
-    notifyItemInserted(position + 1);
+    notifyItemInserted(position + getHeaderViewsCount());
   }
 
   public void addData(List<T> data) {
     mData.addAll(data);
-    notifyItemRangeInserted(mData.size() + 1, data.size());
+    notifyItemRangeInserted(mData.size() + getHeaderViewsCount(), data.size());
   }
 
   public void addData(List<T> data, int position) {
     mData.addAll(position, data);
-    notifyItemRangeInserted(position + 1, data.size());
+    notifyItemRangeInserted(position + getHeaderViewsCount(), data.size());
   }
 
   public void resetData(List<T> data) {
-    mData.clear();
-    mData = data == null ? new ArrayList<T>(0) : data;
+    setData(data);
     notifyDataSetChanged();
   }
 
@@ -230,6 +236,9 @@ public abstract class BaseRecyclerViewAdapter<T>
     int viewType = holder.getItemViewType();
     switch (viewType) {
       case VIEW_TYPE_LOAD_MORE:
+        if (mLoadingMoreListener == null) {
+          Log.w(TAG, "mLoadingMoreListener == null, loadMore will not be executed");
+        }
         if (!mIsLoading && mLoadingMoreListener != null) {
           mIsLoading = true;
           mLoadingMoreListener.requestMoreData();

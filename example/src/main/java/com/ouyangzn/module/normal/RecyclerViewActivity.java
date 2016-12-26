@@ -1,15 +1,14 @@
 package com.ouyangzn.module.normal;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import com.ouyangzn.R;
 import com.ouyangzn.base.BaseActivity;
-import com.ouyangzn.module.multiItem.MultiItemActivity;
 import com.ouyangzn.recyclerview.BaseRecyclerViewAdapter;
 import java.util.ArrayList;
 
@@ -21,6 +20,7 @@ public class RecyclerViewActivity extends BaseActivity
   private LayoutInflater mInflater;
   private RecyclerView mRecyclerView;
   private BaseRecyclerViewAdapter<String> mAdapter;
+  private SwipeRefreshLayout mRefreshLayout;
 
   @Override protected void initData() {
     ArrayList<String> list = getTestData(5);
@@ -42,23 +42,30 @@ public class RecyclerViewActivity extends BaseActivity
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.postDelayed(new Runnable() {
       @Override public void run() {
-        //mAdapter.addData("测试数据null", 2);
-        mAdapter.addData("测试数据null");
-        mRecyclerView.postDelayed(new Runnable() {
-          @Override public void run() {
-            mAdapter.resetData(getTestData(10));
-          }
-        }, 2000);
+        mAdapter.addData("测试数据null", 2);
+        //mAdapter.addData("测试数据null");
+        //mRecyclerView.postDelayed(new Runnable() {
+        //  @Override public void run() {
+        //    mAdapter.resetData(getAddData(10));
+        //  }
+        //}, 2000);
       }
     }, 2000);
     findViewById(R.id.add_fab).setOnClickListener(this);
+    mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+    mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override public void onRefresh() {
+        mAdapter.resetData(getTestData(5));
+        mRefreshLayout.setRefreshing(false);
+      }
+    });
   }
 
   @Override public void onClick(View v) {
     switch (v.getId()) {
       case R.id.add_fab:
         //mAdapter.addData(getTestData(3));
-        mAdapter.addData(getTestData(3), 0);
+        mAdapter.addData(getAddData(3), 1);
         break;
     }
   }
@@ -89,6 +96,14 @@ public class RecyclerViewActivity extends BaseActivity
     ArrayList<String> list = new ArrayList<>();
     for (int i = 1; i < length + 1; i++) {
       list.add("测试数据" + i);
+    }
+    return list;
+  }
+
+  @NonNull private ArrayList<String> getAddData(int length) {
+    ArrayList<String> list = new ArrayList<>();
+    for (int i = 1; i < length + 1; i++) {
+      list.add("手动数据" + i);
     }
     return list;
   }

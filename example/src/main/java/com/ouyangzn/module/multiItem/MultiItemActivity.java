@@ -3,7 +3,7 @@ package com.ouyangzn.module.multiItem;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import com.ouyangzn.R;
@@ -22,7 +22,7 @@ public class MultiItemActivity extends BaseActivity
   private RecyclerView mRecyclerView;
 
   @Override protected void initData() {
-    SparseArray<Integer> array = new SparseArray<>();
+    SparseIntArray array = new SparseIntArray();
     array.put(ItemType.TYPE_1, R.layout.item_recycler_type_1);
     array.put(ItemType.TYPE_2, R.layout.item_recycler_type_2);
     array.put(ItemType.TYPE_3, R.layout.item_recycler_type_3);

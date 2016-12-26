@@ -12,6 +12,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:background="?selectableItemBackground"
+      android:src="@drawable/selector_test_child_click"
       />
   <TextView
       android:id="@+id/string_type_3"

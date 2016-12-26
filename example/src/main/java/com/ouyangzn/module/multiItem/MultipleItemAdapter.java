@@ -1,6 +1,6 @@
 package com.ouyangzn.module.multiItem;
 
-import android.util.SparseArray;
+import android.util.SparseIntArray;
 import com.ouyangzn.R;
 import com.ouyangzn.base.CommonConstants.ItemType;
 import com.ouyangzn.recyclerview.BaseRecyclerViewAdapter;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class MultipleItemAdapter extends BaseRecyclerViewAdapter<TestData> {
 
-  public MultipleItemAdapter(SparseArray<Integer> layoutMap, List<TestData> data) {
+  public MultipleItemAdapter(SparseIntArray layoutMap, List<TestData> data) {
     super(layoutMap, data);
   }
 
@@ -30,7 +30,6 @@ public class MultipleItemAdapter extends BaseRecyclerViewAdapter<TestData> {
         break;
       case ItemType.TYPE_3:
         holder.setText(R.id.string_type_3, item.getName());
-        holder.setImageResource(R.id.img_type3, R.mipmap.ic_launcher);
         holder.setOnClickListener(R.id.img_type3, new OnItemChildClickListener());
         break;
     }
