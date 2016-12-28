@@ -1,0 +1,105 @@
+// 以下配置为发布到jcenter仓库：
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+version = VERSION
+// Maven Group ID for the artifact，对应maven的groupId,一般填你唯一的包名
+group = GROUP_ID
+
+def siteUrl = 'https://github.com/ouyangzn/BaseRecyclerAdapter'
+// 项目的主页
+def gitUrl = 'git@github.com:ouyangzn/BaseRecyclerAdapter.git'
+// Git仓库的url
+install {
+  repositories.mavenInstaller {
+    // This generates POM.xml with proper parameters
+    pom {
+      project {
+        packaging 'aar'
+        // Add your description here 项目的描述
+        groupId GROUP_ID
+        artifactId ARTIFACT_ID
+        version = VERSION
+        name DESCRIPTION
+        url siteUrl
+        // Set your license
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            //填写的一些基本信息
+            id USER
+            name 'Z、ero'
+            email 'ouyangzhaoneng@gmail.com'
+          }
+        }
+        scm {
+          connection gitUrl
+          developerConnection gitUrl
+          url siteUrl
+        }
+      }
+    }
+  }
+}
+
+// build a jar with source files
+task sourcesJar(type: Jar) {
+  from android.sourceSets.main.java.srcDirs
+  classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+  failOnError false
+  source = android.sourceSets.main.java.sourceFiles
+  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+  classpath += configurations.compile
+}
+
+// build a jar with javadoc
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives sourcesJar
+  archives javadocJar
+}
+javadoc {
+  options {
+    encoding "UTF-8"
+    charSet 'UTF-8'
+    author true
+    version VERSION
+    links "http://docs.oracle.com/javase/7/docs/api"
+    title 'BaseRecyclerAdapter'
+  }
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+  user = properties.getProperty("bintray.user")
+  key = properties.getProperty("bintray.apikey")
+  configurations = ['archives']
+  pkg {
+    // 在bintray上的repository仓库名
+    repo = "Android-lib"
+    // project name in jcenter工程名,对应maven的artifactId
+    name = ARTIFACT_ID
+    websiteUrl = siteUrl
+    vcsUrl = gitUrl
+    licenses = ["Apache-2.0"]
+    publish = true
+    version {
+      name = VERSION
+      desc = VERSION_DESC
+    }
+  }
+}
+
