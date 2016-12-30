@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">BaseRecyclerViewAdapter</string>
+  <string name="load_more_failure">加载下一页失败</string>
 </resources>

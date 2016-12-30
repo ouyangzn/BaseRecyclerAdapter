@@ -18,9 +18,10 @@ public class LoadMoreActivity extends BaseActivity
     BaseRecyclerViewAdapter.OnRecyclerViewItemChildClickListener,
     BaseRecyclerViewAdapter.OnLoadingMoreListener {
 
-  private final int DATA_COUNT_ONCE = 5;
+  private final int DATA_COUNT_LOAD_MORE = 5;
   private final int DATA_COUNT_INIT = 15;
-  private final int DATA_COUNT_MAX = 30;
+  private int mLoadMoreCount = 1;
+
 
   private LayoutInflater mInflater;
   private RecyclerView mRecyclerView;
@@ -45,7 +46,14 @@ public class LoadMoreActivity extends BaseActivity
     mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
     mAdapter.addHeaderView(mInflater.inflate(R.layout.item_recycler_header, mRecyclerView, false));
     //mAdapter.addFooterView(mInflater.inflate(R.layout.item_recycler_footer, mRecyclerView, false));
-    mAdapter.setLoadMoreView(mInflater.inflate(R.layout.item_loading, mRecyclerView, false));
+    mAdapter.setLoadMoreView(mInflater.inflate(R.layout.item_load_more, mRecyclerView, false));
+    View loadMoreFail = mInflater.inflate(R.layout.item_load_more_failure, mRecyclerView, false);
+    loadMoreFail.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        mAdapter.reloadMore();
+      }
+    });
+    mAdapter.setLoadMoreFailureView(loadMoreFail);
     mRecyclerView.setAdapter(mAdapter);
   }
 
@@ -78,7 +86,7 @@ public class LoadMoreActivity extends BaseActivity
   }
 
   @Override public void requestMoreData() {
-    if (mAdapter.getData().size() >= DATA_COUNT_MAX) {
+    if (mLoadMoreCount == 5) {
       mRecyclerView.postDelayed(new Runnable() {
         @Override public void run() {
           mAdapter.loadMoreFinish(false, null);
@@ -86,10 +94,19 @@ public class LoadMoreActivity extends BaseActivity
       }, 50);
       return;
     }
+    if (mLoadMoreCount == 2) {
+      mRecyclerView.postDelayed(new Runnable() {
+        @Override public void run() {
+          mAdapter.loadMoreFailure();
+          mLoadMoreCount++;
+        }
+      }, 50);
+      return;
+    }
     ThreadUtil.execute(new Runnable() {
       @Override public void run() {
-        ThreadUtil.sleep(3000);
-        final ArrayList<String> list = getTestData(DATA_COUNT_ONCE);
+        ThreadUtil.sleep(1500);
+        final ArrayList<String> list = getTestData(DATA_COUNT_LOAD_MORE);
         mRecyclerView.post(new Runnable() {
           @Override public void run() {
             mAdapter.loadMoreFinish(true, list);
@@ -97,5 +114,6 @@ public class LoadMoreActivity extends BaseActivity
         });
       }
     });
+    mLoadMoreCount++;
   }
 }

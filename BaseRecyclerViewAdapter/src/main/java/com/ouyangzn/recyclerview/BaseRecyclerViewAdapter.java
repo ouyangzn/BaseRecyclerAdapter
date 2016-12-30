@@ -47,6 +47,7 @@ public abstract class BaseRecyclerViewAdapter<T>
   protected static final int VIEW_TYPE_FOOTER = 0x000001002;
   protected static final int VIEW_TYPE_EMPTY = 0x000001003;
   protected static final int VIEW_TYPE_LOAD_MORE = 0x000001004;
+  protected static final int VIEW_TYPE_LOAD_MORE_FAILURE = 0x000001005;
   private static final String TAG = BaseRecyclerViewAdapter.class.getSimpleName();
   protected Context mContext;
   protected LayoutInflater mLayoutInflater;
@@ -63,9 +64,11 @@ public abstract class BaseRecyclerViewAdapter<T>
   private View mFooterView;
   private View mEmptyView;
   private View mLoadMoreView;
+  private View mLoadMoreFailureView;
   private boolean mShowHeaderFooterWhenEmpty = false;
   private boolean mHasMore = false;
   private boolean mIsLoading = false;
+  private boolean mLoadMoreFailure = false;
 
   /**
    * @param layoutResId item文件的资源id
@@ -108,6 +111,10 @@ public abstract class BaseRecyclerViewAdapter<T>
     this.mLoadMoreView = loadMoreView;
   }
 
+  public void setLoadMoreFailureView(View loadMoreFailureView) {
+    mLoadMoreFailureView = loadMoreFailureView;
+  }
+
   public void setShowHeaderFooterWhenEmpty(boolean showHeaderFooterWhenEmpty) {
     this.mShowHeaderFooterWhenEmpty = showHeaderFooterWhenEmpty;
   }
@@ -133,6 +140,28 @@ public abstract class BaseRecyclerViewAdapter<T>
       mData.addAll(data);
     }
     notifyDataSetChanged();
+  }
+
+  /**
+   * loadMore失败时,后续可通过{@link #reloadMore()}重新加载
+   */
+  public void loadMoreFailure() {
+    this.mHasMore = true;
+    this.mIsLoading = false;
+    this.mLoadMoreFailure = true;
+    notifyDataSetChanged();
+  }
+
+  /**
+   * 重新loadMore，当recyclerView滚动到最下面时，重新loadMore的流程
+   */
+  public void reloadMore() {
+    this.mLoadMoreFailure = false;
+    notifyDataSetChanged();
+  }
+
+  public boolean isLoadMoreFailure() {
+    return mLoadMoreFailure;
   }
 
   public void setOnRecyclerViewItemClickListener(OnRecyclerViewItemClickListener listener) {
@@ -223,6 +252,14 @@ public abstract class BaseRecyclerViewAdapter<T>
       case VIEW_TYPE_LOAD_MORE:
         baseViewHolder = new BaseViewHolder(mLoadMoreView);
         break;
+      case VIEW_TYPE_LOAD_MORE_FAILURE:
+        if (mLoadMoreFailureView == null) {
+          Log.w(TAG, "mLoadMoreFailureView == null");
+          mLoadMoreFailureView =
+              mLayoutInflater.inflate(R.layout.item_load_more_failure, parent, false);
+        }
+        baseViewHolder = new BaseViewHolder(mLoadMoreFailureView);
+        break;
       case VIEW_TYPE_DATA:
       default:
         baseViewHolder = createContentViewHolder(parent, viewType);
@@ -247,6 +284,7 @@ public abstract class BaseRecyclerViewAdapter<T>
       case VIEW_TYPE_HEADER:
       case VIEW_TYPE_FOOTER:
       case VIEW_TYPE_EMPTY:
+      case VIEW_TYPE_LOAD_MORE_FAILURE:
         break;
       case VIEW_TYPE_DATA:
       default:
@@ -277,6 +315,11 @@ public abstract class BaseRecyclerViewAdapter<T>
     if (mData.size() == 0 && ((mEmptyView != null && mHeaderView != null && position == 1)
         || mEmptyView != null && mHeaderView == null && position == 0)) {
       return VIEW_TYPE_EMPTY;
+    }
+    // 加载更多失败时的view
+    if (mLoadMoreFailure
+        && position == mData.size() + getHeaderViewsCount() + getFooterViewsCount()) {
+      return VIEW_TYPE_LOAD_MORE_FAILURE;
     }
     // 有更多时，最后一行为加载更多
     if (mHasMore && position == mData.size() + getHeaderViewsCount() + getFooterViewsCount()) {
@@ -331,7 +374,8 @@ public abstract class BaseRecyclerViewAdapter<T>
     if (type == VIEW_TYPE_HEADER
         || type == VIEW_TYPE_FOOTER
         || type == VIEW_TYPE_EMPTY
-        || type == VIEW_TYPE_LOAD_MORE) {
+        || type == VIEW_TYPE_LOAD_MORE
+        || type == VIEW_TYPE_LOAD_MORE_FAILURE) {
       setFullSpan(holder);
     }
   }
@@ -358,7 +402,8 @@ public abstract class BaseRecyclerViewAdapter<T>
           return (type == VIEW_TYPE_HEADER
               || type == VIEW_TYPE_FOOTER
               || type == VIEW_TYPE_EMPTY
-              || type == VIEW_TYPE_LOAD_MORE) ? gridManager.getSpanCount() : 1;
+              || type == VIEW_TYPE_LOAD_MORE
+              || type == VIEW_TYPE_LOAD_MORE_FAILURE) ? gridManager.getSpanCount() : 1;
         }
       });
     }
