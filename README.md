@@ -30,6 +30,7 @@ compile 'com.ouyangzn.lib:BaseRecyclerViewAdapter:1.1.0'
     
 ### 具体用法见Exmaple
 
+## change log ：
 [change log](https://github.com/ouyangzn/BaseRecyclerAdapter/blob/master/changelog.md)
 
 ## 参考Thanks：
