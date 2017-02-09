@@ -222,13 +222,13 @@ public abstract class BaseRecyclerViewAdapter<T>
 
   public void remove(int position) {
     mData.remove(position);
-    notifyItemRemoved(position + 1);
+    notifyItemRemoved(position + getHeaderViewsCount());
   }
 
   public void remove(T t) {
     int size = mData.size();
     for (int i = 0; i < size; i++) {
-      if (t == mData.get(i)) {
+      if (t.equals(mData.get(i))) {
         remove(i);
         break;
       }
