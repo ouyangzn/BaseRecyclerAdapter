@@ -197,22 +197,41 @@ public abstract class BaseRecyclerViewAdapter<T>
 
   public void addData(T t) {
     mData.add(t);
-    notifyItemInserted(mData.size() + getHeaderViewsCount());
+    // 原来没数据但是有emptyView
+    if (mData.size() == 1 && getEmptyViewsCount() != 0) {
+      // 实际上emptyView只能有1个
+      notifyItemChangedIgnoreHeader(0);
+    } else {
+      notifyItemInserted(mData.size() + getHeaderViewsCount());
+    }
   }
 
   public void addData(T t, int position) {
-    mData.add(position, t);
-    notifyItemInserted(position + getHeaderViewsCount());
+    if (mData.size() == 0) {
+      addData(t);
+    } else {
+      mData.add(position, t);
+      notifyItemInserted(position + getHeaderViewsCount());
+    }
   }
 
   public void addData(List<T> data) {
     mData.addAll(data);
-    notifyItemRangeInserted(mData.size() + getHeaderViewsCount(), data.size());
+    // 原来没数据，显示的EmptyView
+    if (mData.size() == data.size() && getEmptyViewsCount() != 0) {
+      notifyDataSetChanged();
+    } else {
+      notifyItemRangeInserted(mData.size() + getHeaderViewsCount(), data.size());
+    }
   }
 
   public void addData(List<T> data, int position) {
-    mData.addAll(position, data);
-    notifyItemRangeInserted(position + getHeaderViewsCount(), data.size());
+    if (mData.size() == 0) {
+      addData(data);
+    } else {
+      mData.addAll(position, data);
+      notifyItemRangeInserted(position + getHeaderViewsCount(), data.size());
+    }
   }
 
   public void resetData(List<T> data) {
@@ -222,7 +241,11 @@ public abstract class BaseRecyclerViewAdapter<T>
 
   public void remove(int position) {
     mData.remove(position);
-    notifyItemRemoved(position + getHeaderViewsCount());
+    if (mData.size() == 0) {
+      notifyDataSetChanged();
+    } else {
+      notifyItemRemoved(position + getHeaderViewsCount());
+    }
   }
 
   public void remove(T t) {
@@ -233,6 +256,25 @@ public abstract class BaseRecyclerViewAdapter<T>
         break;
       }
     }
+  }
+
+  /**
+   * 修改了某个数据，不用考虑header的存在
+   *
+   * @param dataPosition 数据在数据集的位置
+   */
+  public void notifyItemChangedIgnoreHeader(int dataPosition) {
+    notifyItemChanged(dataPosition + getHeaderViewsCount());
+  }
+
+  /**
+   * 修改了某些数据，不用考虑header的存在
+   *
+   * @param positionStart 第一个数据在集合中的位置
+   * @param itemCount 数据的数量
+   */
+  public void notifyItemRangeChangedIgnoreHeader(int positionStart, int itemCount) {
+    notifyItemRangeChanged(positionStart + getHeaderViewsCount(), itemCount);
   }
 
   @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -18,15 +18,27 @@ Super RecyclerView Adapter
 ```
 - 3、支持多种类型item的adapter，多类型item使用接口定义各自的itemType：
 ```java
-    public class TestData implements MultipleEntity
+    public class TestData implements MultipleEntity {}
 ```
 - 4、支持loadMore：
 ```java
+    mAdapter.setLoadMoreView(view);
+    mAdapter.setLoadMoreFailureView(failView);
+    failView.setOnClickListener(new View.OnClickListener() {
+              @Override public void onClick(View v) {
+                mAdapter.reloadMore();
+              }
+            });
+
     mAdapter.setOnLoadingMoreListener(this);
-    mAdapter.setHasMore(true);
+    mAdapter.setHasMore(data.size() == LIMIT);
+    // request data success
+    mAdapter.loadMoreFinish(data.size() == LIMIT, data);
+    // or request data failure
+    mAdapter.loadMoreFailure();
 ```
 ## 使用（usage）：
-compile 'com.ouyangzn.lib:BaseRecyclerViewAdapter:1.1.0'
+compile 'com.ouyangzn.lib:BaseRecyclerViewAdapter:1.1.1'
     
 ### 具体用法见Exmaple
 
